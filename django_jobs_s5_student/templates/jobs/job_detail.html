@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}求人詳細{% endblock %}
+{% block content %}
+<!--
+	求人詳細テンプレート
+	- このテンプレートは DetailView（JobDetail）から渡される `object` を使って求人の各フィールドを表示します。
+	- `object` は DetailView が提供するコンテキスト変数で、この場合は Job モデルのインスタンスです。
+	- 表示に使っているフィルタ:
+		- `date:"Y-m-d H:i"` : 日時を YYYY-MM-DD HH:MM 形式で表示
+		- `linebreaks` : 改行を <p> と <br> に変換して整形表示
+-->
+
+<h2>{{ object.title }}</h2>
+
+<!-- 会社名と勤務地 -->
+<p><strong>{{ object.company }}</strong> / {{ object.location }}</p>
+
+<!-- 掲載日時（フォーマット済み） -->
+<p class="small">{{ object.posted_at|date:"Y-m-d H:i" }}</p>
+
+<!-- 仕事内容（改行を HTML に変換して表示） -->
+<p>{{ object.description|linebreaks }}</p>
+
+<!-- 一覧ページへのリンク -->
+<p><a class="btn" href="{% url 'jobs:job_list' %}">一覧へ戻る</a></p>
+{% endblock %}

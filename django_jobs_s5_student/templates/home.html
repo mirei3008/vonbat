@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h2>ようこそ</h2>
+<p>このデモは <strong>検索 / 並び替え / ページネーション</strong> を学ぶための最小実装です。</p>
+<p><a class="btn btn-primary" href="{% url 'jobs:job_list' %}">求人一覧を見る</a></p>
+{% endblock %}

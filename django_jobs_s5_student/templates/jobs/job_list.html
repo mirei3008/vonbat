@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}求人一覧{% endblock %}
+{% block content %}
+<h2>求人一覧</h2>
+
+<!-- 検索フォーム -->
+<!--
+  - method="get": 検索条件をクエリパラメータとして送信する
+  - {{ form.q }}: SearchSortForm の q フィールド（テキスト入力）をレンダリング
+  - {{ form.sort }}: SearchSortForm の sort フィールド（選択リスト）をレンダリング
+  - 送信後はビュー側でフォームに GET パラメータがバインドされるため、
+    入力値がウィジェットの value や selected に自動的に残る
+  - 条件リセットは GET パラメータをクリアしてトップの URL に戻す
+-->
+<form method="get" class="cluster" style="gap:.5rem 1rem;">
+  {{ form.q }}
+  {{ form.sort }}
+  <button class="btn btn-primary" type="submit">検索</button>
+  {% if request.GET.q or request.GET.sort %}
+    <!-- 検索条件があるときだけ表示するリセットリンク -->
+    <a class="btn" href="{% url 'jobs:job_list' %}">条件リセット</a>
+  {% endif %}
+</form>
+
+<!-- 検索結果の総件数を表示（ビューの get_context_data で計算） -->
+<p class="small">結果：{{ total_count }} 件</p>
+
+{% if object_list %}
+  <!-- 求人リストを表示 -->
+  <ul class="stack">
+  {% for j in object_list %}
+    <li>
+      <!-- 各求人へのリンクと補助情報（会社名・勤務地・掲載日） -->
+      <a href="{% url 'jobs:job_detail' j.pk %}">{{ j.title }}</a>
+      <small class="small"> / {{ j.company }} / {{ j.location }}</small>
+      <div class="small">{{ j.posted_at|date:"Y-m-d H:i" }}</div>
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <!-- 検索結果が空の場合の表示 -->
+  <p>該当する結果はありません。</p>
+{% endif %}
+
+{% if is_paginated %}
+  <!-- ページネーション（ページ切替リンク） -->
+  <!--
+    - is_paginated: 結果がページ分割されているかどうか（ListView が設定）
+    - qparams: page を除いた現在の GET パラメータ（ビューで作成）。
+      ページリンクに付与することで検索条件を維持する。
+  -->
+  <nav class="cluster" aria-label="ページャ">
+    {% if page_obj.has_previous %}
+      <!-- 最初・前へ（前のページがあるときのみ表示） -->
+      <a class="btn" href="?page=1{% if qparams %}&{{ qparams }}{% endif %}">最初</a>
+      <a class="btn" href="?page={{ page_obj.previous_page_number }}{% if qparams %}&{{ qparams }}{% endif %}">前へ</a>
+    {% endif %}
+    <!-- 現在ページ / 総ページ数 -->
+    <span>Page {{ page_obj.number }} / {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <!-- 次へ・最後（次のページがあるときのみ表示） -->
+      <a class="btn" href="?page={{ page_obj.next_page_number }}{% if qparams %}&{{ qparams }}{% endif %}">次へ</a>
+      <a class="btn" href="?page={{ paginator.num_pages }}{% if qparams %}&{{ qparams }}{% endif %}">最後</a>
+    {% endif %}
+  </nav>
+{% endif %}
+{% endblock %}

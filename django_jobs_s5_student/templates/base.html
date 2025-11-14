@@ -1,0 +1,16 @@
+{% load static %}
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}求人ボード{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'extra/ui.css' %}">
+</head><body class="container">
+<header class="stack">
+  <h1 class="site-title"><a href="{% url 'jobs:home' %}">求人ボード（検索/並び替え/ページネーション）</a></h1>
+</header>
+<nav class="cluster" aria-label="主要ナビ">
+  <a href="{% url 'jobs:home' %}">Home</a>
+  <a href="{% url 'jobs:job_list' %}">求人一覧</a>
+</nav>
+<main class="stack">{% block content %}{% endblock %}</main>
+<footer class="stack small"><p>&copy; {% now "Y" %}</p></footer>
+</body></html>
